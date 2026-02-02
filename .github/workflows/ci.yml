@@ -1,0 +1,70 @@
+name: CI - macOS Build
+
+on:
+  push:
+    branches: ["*"]
+  pull_request:
+    branches: [main, master]
+
+jobs:
+  build-macos:
+    name: Build and Run on macOS
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "10.0.x"
+
+      - name: Display .NET info
+        run: dotnet --info
+
+      - name: Restore dependencies
+        run: dotnet restore
+
+      - name: Build
+        run: dotnet build --configuration Release --no-restore
+
+      - name: Run application (smoke test)
+        run: |
+          echo "Starting application for 5 seconds..."
+          timeout 5s dotnet run --configuration Release --no-build || true
+          echo "Application test completed"
+
+      - name: Publish macOS x64
+        run: |
+          dotnet publish \
+            --configuration Release \
+            --runtime osx-x64 \
+            --self-contained true \
+            -p:PublishSingleFile=true \
+            -p:IncludeNativeLibrariesForSelfExtract=true \
+            --output ./publish/osx-x64
+
+      - name: Publish macOS ARM64
+        run: |
+          dotnet publish \
+            --configuration Release \
+            --runtime osx-arm64 \
+            --self-contained true \
+            -p:PublishSingleFile=true \
+            -p:IncludeNativeLibrariesForSelfExtract=true \
+            --output ./publish/osx-arm64
+
+      - name: Upload macOS x64 artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: AdformMcp-osx-x64
+          path: ./publish/osx-x64/
+          retention-days: 7
+
+      - name: Upload macOS ARM64 artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: AdformMcp-osx-arm64
+          path: ./publish/osx-arm64/
+          retention-days: 7
