@@ -1,224 +1,154 @@
-# AdformMcp Server
+# AdformMcp - Confluence MCP Server
 
-A Model Context Protocol (MCP) server built with .NET 10.0 for Adform integrations.
+A Model Context Protocol (MCP) server that provides tools for interacting with Confluence pages. This server enables AI assistants to fetch and parse Confluence content directly.
 
 ## Features
 
-- MCP server with stdio transport
-- Built on .NET 10.0
-- Native support for macOS (Intel and Apple Silicon)
-- Automated CI/CD with GitHub Actions
+- Fetch Confluence pages by ID
+- Parse Amplitude data tables from Confluence pages
+- Ping tool for testing connectivity
 
-## Requirements
+## Installation
 
-- .NET 10.0 SDK
-- macOS (Intel or Apple Silicon)
+### Download the Binary
 
-## Building Locally
+1. Go to the [Releases](https://github.com/YOUR_USERNAME/AdformMcp/releases) page
+2. Download the latest release for your Mac:
+   - **Apple Silicon (M1/M2/M3)**: `AdformMcp-osx-arm64.tar.gz`
+   - **Intel Mac**: `AdformMcp-osx-x64.tar.gz`
+3. Extract the archive:
+   ```bash
+   tar -xzf AdformMcp-osx-arm64.tar.gz
+   ```
+4. Make it executable:
+   ```bash
+   chmod +x AdformMcp
+   ```
+5. Move it to a permanent location (e.g., `~/bin/` or `/usr/local/bin/`)
 
-### Clone the repository
+## Environment Variables
 
+You need to set up Confluence credentials as environment variables. These will be configured in your MCP client.
+
+### Getting Your Confluence API Token
+
+1. Go to [Atlassian API Tokens](https://id.atlassian.com/manage-profile/security/api-tokens)
+2. Click "Create API token"
+3. Give it a label (e.g., "MCP Server")
+4. Copy the generated token
+
+## Connecting to Claude Desktop
+
+To connect this server to Claude Desktop, add the following configuration to your Claude Desktop config file:
+
+**Location:** `~/Library/Application Support/Claude/claude_desktop_config.json`
+
+```json
+{
+  "mcpServers": {
+    "adform-confluence": {
+      "command": "/absolute/path/to/AdformMcp",
+      "env": {
+        "CONFLUENCE_EMAIL": "your.email@example.com",
+        "CONFLUENCE_TOKEN": "your-confluence-api-token"
+      }
+    }
+  }
+}
+```
+
+### Configuration Steps
+
+1. Replace `/absolute/path/to/AdformMcp` with the full path where you placed the binary
+   - Example: `/Users/yourusername/bin/AdformMcp`
+2. Replace `your.email@example.com` with your Adform email
+3. Replace `your-confluence-api-token` with the API token you generated
+4. Save the file
+5. Restart Claude Desktop
+
+**How to find the full path:**
 ```bash
-git clone <your-repo-url>
-cd AdformMcp
+# If you placed it in your current directory
+pwd  # Shows current directory, then append /AdformMcp
+
+# Or if you placed it in ~/bin/
+echo ~/bin/AdformMcp
 ```
 
-### Restore dependencies
+## Connecting to Other MCP Clients
 
-```bash
-dotnet restore
+For other MCP clients that support stdio transport:
+
+**Command:**
+```
+/path/to/AdformMcp
 ```
 
-### Build the project
+**Environment Variables Required:**
+- `CONFLUENCE_EMAIL`: Your Confluence email
+- `CONFLUENCE_TOKEN`: Your Confluence API token
 
-```bash
-dotnet build --configuration Release
-```
+## Available Tools
 
-### Run the application
+Once connected, you can use these tools through your MCP client (e.g., Claude):
 
-```bash
-dotnet run --configuration Release
-```
+### `ping`
+Test tool to verify the server is running.
 
-## Publishing Self-Contained Executables
+**Example:** "Can you ping the Adform Confluence server?"
 
-### For Intel Macs (x64)
+**Returns:** "Pong"
 
-```bash
-dotnet publish \
-  --configuration Release \
-  --runtime osx-x64 \
-  --self-contained true \
-  -p:PublishSingleFile=true \
-  -p:IncludeNativeLibrariesForSelfExtract=true \
-  --output ./publish/osx-x64
-```
+### `GetAmplitudeData`
+Fetches a Confluence page by ID and parses Amplitude data tables.
 
-### For Apple Silicon Macs (ARM64)
+**Parameters:**
+- `id` (string): The Confluence page ID
 
-```bash
-dotnet publish \
-  --configuration Release \
-  --runtime osx-arm64 \
-  --self-contained true \
-  -p:PublishSingleFile=true \
-  -p:IncludeNativeLibrariesForSelfExtract=true \
-  --output ./publish/osx-arm64
-```
+**Example:** "Can you get the Amplitude data from Confluence page 123456789?"
 
-The compiled executable will be in the respective `publish/` directory and can be run without requiring .NET to be installed.
-
-## GitHub Actions CI/CD
-
-This project includes automated workflows for building and releasing on macOS.
-
-### Continuous Integration
-
-Every push to any branch automatically:
-- Builds the project on macOS
-- Runs smoke tests
-- Creates artifacts for both Intel and Apple Silicon Macs
-
-Artifacts are available in the Actions tab for 7 days.
-
-### Creating Releases
-
-#### Method 1: Via Git Tag
-
-```bash
-# Create and push a version tag
-git tag v1.0.0
-git push origin v1.0.0
-```
-
-This automatically:
-- Builds the application
-- Creates a GitHub Release
-- Attaches compiled binaries for both architectures
-
-#### Method 2: Via GitHub UI
-
-1. Go to "Releases" in your GitHub repository
-2. Click "Draft a new release"
-3. Create a new tag (e.g., `v1.0.0`)
-4. Add release notes
-5. Click "Publish release"
-
-The workflows will automatically build and attach the macOS binaries.
-
-#### Method 3: Manual Workflow Dispatch
-
-1. Go to the "Actions" tab
-2. Select "Build and Release"
-3. Click "Run workflow"
-4. Choose your branch and run
-
-### Release Artifacts
-
-Each release includes:
-- `AdformMcp-osx-x64.tar.gz` - For Intel Macs
-- `AdformMcp-osx-arm64.tar.gz` - For Apple Silicon Macs
-
-### Installing from Release
-
-```bash
-# Download the appropriate release for your Mac
-# For Intel Macs: AdformMcp-osx-x64.tar.gz
-# For Apple Silicon: AdformMcp-osx-arm64.tar.gz
-
-# Extract
-tar -xzf AdformMcp-osx-*.tar.gz
-
-# Make executable (if needed)
-chmod +x AdformMcp
-
-# Run
-./AdformMcp
-```
-
-## Project Structure
-
-```
-AdformMcp/
-├── .github/
-│   └── workflows/
-│       ├── ci.yml                    # Continuous integration
-│       ├── build-and-release.yml     # Release automation
-│       └── README.md                 # Workflow documentation
-├── Confluence/                       # Confluence-related files
-├── Program.cs                        # Main application entry point
-├── Tools.cs                          # MCP tools implementation
-├── Util.cs                           # Utility functions
-├── AdformMcp.csproj                  # Project file
-└── README.md                         # This file
-```
-
-## Dependencies
-
-- **Microsoft.Extensions.Hosting** (v10.0.2) - Hosting infrastructure
-- **ModelContextProtocol** (v0.6.0-preview.1) - MCP server implementation
-
-## Development
-
-### Adding New Tools
-
-Add new MCP tools in the `Tools.cs` file. Tools are automatically discovered and registered via the `WithToolsFromAssembly()` method.
-
-### Configuration
-
-The server uses stdio transport for communication. Configure the host in `Program.cs`.
+**Returns:** Parsed Amplitude data from the page, or an error message if the page cannot be fetched.
 
 ## Troubleshooting
 
-### .NET 10.0 Not Found
+### "CONFLUENCE_EMAIL environment variable is not set"
+Make sure you've added both `CONFLUENCE_EMAIL` and `CONFLUENCE_TOKEN` to the `env` section of your MCP client configuration.
 
-Ensure you have the .NET 10.0 SDK installed:
+### Claude Desktop doesn't see the server
+1. Ensure the path to the binary is **absolute** (starts with `/`), not relative
+2. Check that the binary has execute permissions: `chmod +x /path/to/AdformMcp`
+3. Verify the JSON syntax in your config file is correct (use a JSON validator if needed)
+4. Restart Claude Desktop after modifying the config file
+5. Check Claude Desktop logs at: `~/Library/Logs/Claude/`
 
-```bash
-dotnet --version
+### "Permission denied" error
+Run: `chmod +x /path/to/AdformMcp`
+
+### Connection issues
+- Verify your Confluence API token is valid and not expired
+- Ensure you have network access to `https://adform.atlassian.net`
+- Check that your email and token are correctly set in the configuration
+- Try regenerating your API token if issues persist
+
+### Wrong architecture
+If the binary won't run:
+- On Apple Silicon: Make sure you downloaded the `osx-arm64` version
+- On Intel Mac: Make sure you downloaded the `osx-x64` version
+- Check your Mac's architecture: `uname -m` (returns `arm64` or `x86_64`)
+
+## Verifying Installation
+
+After setup, restart Claude Desktop and try asking:
+```
+Can you ping the Adform Confluence server?
 ```
 
-Download from: https://dotnet.microsoft.com/download
-
-### Build Fails
-
-1. Clean the build artifacts:
-   ```bash
-   dotnet clean
-   rm -rf bin/ obj/
-   ```
-
-2. Restore and rebuild:
-   ```bash
-   dotnet restore
-   dotnet build
-   ```
-
-### Runtime Issues on macOS
-
-If you get security warnings when running the published executable:
-
-```bash
-# Remove quarantine attribute
-xattr -d com.apple.quarantine ./AdformMcp
-```
-
-Or right-click the executable, select "Open", and confirm in the security dialog.
-
-## Contributing
-
-1. Create a feature branch
-2. Make your changes
-3. Push to the branch
-4. Create a Pull Request
-
-The CI workflow will automatically build and test your changes.
-
-## License
-
-[Add your license information here]
+If you get "Pong" back, everything is working correctly!
 
 ## Support
 
-[Add support/contact information here]
+For issues and questions, contact your internal Adform support team or create an issue on the GitHub repository.
+
+## License
+
+Internal Adform tool.
