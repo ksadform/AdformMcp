@@ -31,9 +31,11 @@ public static class ConfluenceUrl
 
 public static class ConfluenceSecret
 {
-    public static readonly string Email = Environment.GetEnvironmentVariable("CONFLUENCE_EMAIL")
+    public static string Email => Environment.GetEnvironmentVariable("CONFLUENCE_EMAIL")
         ?? throw new InvalidOperationException("CONFLUENCE_EMAIL environment variable is not set");
 
-    public static readonly string Token = Environment.GetEnvironmentVariable("CONFLUENCE_TOKEN")
+    public static string Token => Environment.GetEnvironmentVariable("CONFLUENCE_TOKEN")
         ?? throw new InvalidOperationException("CONFLUENCE_TOKEN environment variable is not set");
 }
+
+
