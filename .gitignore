@@ -1,0 +1,90 @@
+# Build results
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+bld/
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
+
+# Visual Studio files
+.vs/
+*.user
+*.userosscache
+*.sln.docstates
+*.suo
+*.cache
+*.vspscc
+*.vssscc
+
+# Visual Studio Code
+.vscode/
+
+# JetBrains Rider
+.idea/
+*.sln.iml
+
+# NuGet
+*.nupkg
+*.snupkg
+**/[Pp]ackages/*
+!**/[Pp]ackages/build/
+*.nuget.props
+*.nuget.targets
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+# MSBuild
+*.log
+msbuild*.wrn
+msbuild*.err
+msbuild*.sln.metaproj
+msbuild*.sln.metaproj.tmp
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# dotenv environment files
+.env
+.env.local
+.env.*.local
+*.env
+
+# Application settings with secrets
+appsettings.Development.json
+appsettings.Local.json
+secrets.json
+
+# Test results
+[Tt]est[Rr]esult*/
+[Bb]uild[Ll]og.*
+*.trx
+TestResult.xml
+
+# Code coverage
+*.coverage
+*.coveragexml
+coverage/
+coverage*.json
+coverage*.xml
+
+# Publish output
+publish/
+out/
+
+# User-specific files
+*.rsuser
+*.pubxml
+!**/[Pp]ublish[Pp]rofiles/[Rr]eadme.md
