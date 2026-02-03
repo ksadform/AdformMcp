@@ -42,7 +42,7 @@ Add this configuration to your MCP client settings:
 
 ```json
 {
-  "adform-confluence": {
+  "adform-mcp-server": {
     "command": "/absolute/path/to/AdformMcp",
     "args": [],
     "env": {
