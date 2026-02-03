@@ -20,7 +20,6 @@ public static class ConfluenceTools
         if (Util.HasError(pageDataError) || pageData == null) return "Unable to fetch Amplitude page data";
 
         var output = ConfluenceService.ParseAmplitudeTable(pageData);
-
         return output;
     }
 
