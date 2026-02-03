@@ -29,16 +29,10 @@ A Model Context Protocol (MCP) server that enables AI assistants to fetch and pa
    mv AdformMcp ~/bin/
    chmod +x ~/bin/AdformMcp
    ```
-
-### macOS Permissions
-
-When you first run the binary, macOS will block it. To allow:
-
-1. Try running it once - you'll get a security warning
-2. Go to **System Settings** → **Privacy & Security**
-3. Scroll down to the **Security** section
-4. Click **"Allow Anyway"** next to the AdformMcp message
-5. Try running again and click **"Open"** when prompted
+ 5. MacOS Permission
+    ```bash
+    xattr -dr com.apple.quarantine ~/bin/AdformMcp
+    ```
 
 ## Usage
 
