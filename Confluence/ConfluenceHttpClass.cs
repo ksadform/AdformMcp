@@ -7,7 +7,7 @@ using System.Text;
 
 public static class ConfluenceHttpClient
 {
-    public static async Task<string> GetPageById(string id, PrimaryBodyRepresentation? bodyFormat = null)
+    public static async Task<string> GetPageById(string id, string? bodyFormat = null)
     {
         var url = ConfluenceUrl.GetPageById(id, bodyFormat);
 

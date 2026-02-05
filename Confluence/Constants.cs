@@ -1,25 +1,25 @@
 namespace AdformMcp.Confluence;
 
-public enum PrimaryBodyRepresentation
+public static class PrimaryBodyRepresentation
 {
-    storage,
-    atlas_doc_format,
-    view,
-    export_view,
-    anonymous_export_view,
-    styled_view,
-    editor
+    public const string Storage = "storage";
+    public const string AtlasDocFormat = "atlas_doc_format";
+    public const string View = "view";
+    public const string ExportView = "export_view";
+    public const string AnonymousExportView = "anonymous_export_view";
+    public const string StyledView = "styled_view";
+    public const string Editor = "editor";
 }
 
 public static class ConfluenceUrl
 {
     public const string Base = "https://adform.atlassian.net";
 
-    public static string GetPageById(string id, PrimaryBodyRepresentation? bodyFormat = null)
+    public static string GetPageById(string id, string? bodyFormat = null)
     {
         var url = $"{Base}/wiki/api/v2/pages/{id}";
 
-        if (bodyFormat.HasValue)
+        if (!string.IsNullOrEmpty(bodyFormat))
         {
             url += $"?body-format={bodyFormat}";
         }
@@ -37,5 +37,3 @@ public static class ConfluenceSecret
     public static string Token => Environment.GetEnvironmentVariable("CONFLUENCE_TOKEN")
         ?? throw new InvalidOperationException("CONFLUENCE_TOKEN environment variable is not set");
 }
-
-

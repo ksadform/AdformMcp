@@ -9,7 +9,7 @@ public static class ConfluenceService
     {
         if (string.IsNullOrWhiteSpace(pageData)) return null;
 
-        var documentBody = ExtractDocumentBody(pageData);
+        var documentBody = ExtractDocumentBody(pageData, PrimaryBodyRepresentation.View);
         if (documentBody == null) return "Unable to parse amplitude table";
 
         var contentDoc = ParseContentDocument(documentBody);
@@ -20,8 +20,6 @@ public static class ConfluenceService
 
         var rows = ExtractTableRows(tableNode as JsonNode);
         if (rows == null) return "Table has no rows";
-
-
 
         var headers = ExtractHeaders(rows);
         if (headers == null) return "Table has no header row";
@@ -34,12 +32,13 @@ public static class ConfluenceService
         });
     }
 
-    private static string? ExtractDocumentBody(string pageData)
+    public static string? ExtractDocumentBody(string pageData, string primaryBody)
     {
+
         var (doc, error) = Util.Unwrap(() => JsonNode.Parse(pageData));
         if (Util.HasError(error) || doc == null) return null;
 
-        var documentBodyValue = doc["body"]?["atlas_doc_format"]?["value"];
+        var documentBodyValue = doc["body"]?[primaryBody]?["value"];
         if (documentBodyValue == null) return null;
 
         var valueString = documentBodyValue.GetValue<string>();

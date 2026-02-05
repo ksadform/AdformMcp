@@ -8,6 +8,20 @@ public static class ConfluenceTools
 {
     private const string AmplitudeInstructionPath = "Instructions/Amplitude.md";
 
+    [McpServerTool, Description("Fetches a Confluence page by its ID and converts the content to Markdown format. Returns the page content as a Markdown string.")]
+    public static async Task<string> GetConfluencePageInMarkdown(string id)
+    {
+        var (pageData, pageDataError) = await Util.Unwrap(() => ConfluenceHttpClient.GetPageById(id, PrimaryBodyRepresentation.View));
+        if (Util.HasError(pageDataError) || pageData == null)
+            return "Unable to fetch page data from Confluence";
+        var body = ConfluenceService.ExtractDocumentBody(pageData, PrimaryBodyRepresentation.View);
+
+        if (body == null) return "NO DATA";
+        var converter = new ReverseMarkdown.Converter();
+        var markdown = converter.Convert(body);
+        return markdown;
+    }
+
     [McpServerTool, Description("Get Amplitude tracking implementation guide and instructions")]
     public static async Task<string> GetAmplitudeInstruction()
     {
@@ -47,16 +61,6 @@ public static class ConfluenceTools
         }
     }
 
-    [McpServerTool, Description("Fetch Amplitude event data from Confluence page by ID")]
-    public static async Task<string?> GetAmplitudeData(string id)
-    {
-        var (pageData, pageDataError) = await Util.Unwrap(() => ConfluenceHttpClient.GetPageById(id, PrimaryBodyRepresentation.atlas_doc_format));
-        if (Util.HasError(pageDataError) || pageData == null)
-            return "Unable to fetch Amplitude page data from Confluence";
-
-        var output = ConfluenceService.ParseAmplitudeTable(pageData);
-        return output;
-    }
 
     [McpServerTool, Description("Implement Amplitude events by first getting the instruction guide and then fetching the Amplitude data from Confluence page")]
     public static async Task<string> ImplementAmplitudeEvents(string id)
@@ -72,13 +76,12 @@ public static class ConfluenceTools
             }
 
             // Step 2: Get the Amplitude data from Confluence
-            var amplitudeData = await GetAmplitudeData(id);
+            var amplitudeData = await GetConfluencePageInMarkdown(id);
 
             if (amplitudeData == null || amplitudeData.StartsWith("Unable to fetch"))
             {
                 return $"Failed to get Amplitude data: {amplitudeData ?? "No data returned"}";
             }
-
 
             return Prompt.ImplementAmplitude(id, instruction, amplitudeData);            // Step 3: Combine both for implementation
         }

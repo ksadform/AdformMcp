@@ -2,8 +2,6 @@
 
 > **⚠️ IMPORTANT: Do NOT generate any summary files, documentation files, or any type of `.md` files during implementation. Only implement the tracking code directly in the relevant source files.**
 
-This guide provides step-by-step instructions for implementing Amplitude event tracking in the AAP Frontend project based on the `amplitude.input.json` data file.
-
 ## Table of Contents
 
 1. [Overview](#overview)
@@ -17,8 +15,6 @@ This guide provides step-by-step instructions for implementing Amplitude event t
 ---
 
 ## Overview
-
-**Important: Do NOT create any additional summary .md files, documentation files, or output files of any kind. Just implement the tracking code directly in the source files as described in this guide.**
 
 The AAP Frontend uses Amplitude for usage tracking through a centralized `UsageTracker` abstraction layer. Events are tracked using the `@amplitude/analytics-browser` SDK with proper categorization and properties.
 
