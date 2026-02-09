@@ -5,6 +5,10 @@ namespace AdformMcp.Confluence;
 
 public static class ConfluenceService
 {
+
+
+
+
     public static string? ParseAmplitudeTable(string? pageData)
     {
         if (string.IsNullOrWhiteSpace(pageData)) return null;

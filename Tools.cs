@@ -78,6 +78,25 @@ public static class ConfluenceTools
             // Step 2: Get the Amplitude data from Confluence
             var amplitudeData = await GetConfluencePageInMarkdown(id);
 
+            // Step 2: Get the Amplitude data from Confluence pages in parallel
+            var pageIds = new[]
+            {
+                id,
+                ConfluencePageId.AmplitudeEventsTaxonomy,
+                ConfluencePageId.AmplitudePropertiesTaxonomy,
+                ConfluencePageId.AmplitudeImplementationPattern,
+
+            };
+
+            var pageDataTasks = pageIds.Select(GetConfluencePageInMarkdown).ToArray();
+            var pageDataResults = await Task.WhenAll(pageDataTasks);
+            
+            var amplitudePageData = pageDataResults[0];
+            var eventsTaxonomyData = pageDataResults[1];
+            var propertiesTaxonomyData = pageDataResults[2];
+            var implementationPatternData = pageDataResults[3];
+
+
             if (amplitudeData == null || amplitudeData.StartsWith("Unable to fetch"))
             {
                 return $"Failed to get Amplitude data: {amplitudeData ?? "No data returned"}";

@@ -37,3 +37,11 @@ public static class ConfluenceSecret
     public static string Token => Environment.GetEnvironmentVariable("CONFLUENCE_TOKEN")
         ?? throw new InvalidOperationException("CONFLUENCE_TOKEN environment variable is not set");
 }
+
+
+public static class ConfluencePageId
+{
+    public const string AmplitudeEventsTaxonomy = "886341676";
+    public const string AmplitudePropertiesTaxonomy = "3929374737";
+    public const string AmplitudeImplementationPattern = "5358321694";
+}
