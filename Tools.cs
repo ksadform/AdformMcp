@@ -90,19 +90,26 @@ public static class ConfluenceTools
 
             var pageDataTasks = pageIds.Select(GetConfluencePageInMarkdown).ToArray();
             var pageDataResults = await Task.WhenAll(pageDataTasks);
-            
+
             var amplitudePageData = pageDataResults[0];
             var eventsTaxonomyData = pageDataResults[1];
             var propertiesTaxonomyData = pageDataResults[2];
             var implementationPatternData = pageDataResults[3];
 
 
-            if (amplitudeData == null || amplitudeData.StartsWith("Unable to fetch"))
+            if (amplitudePageData == null || amplitudePageData.StartsWith("Unable to fetch"))
             {
-                return $"Failed to get Amplitude data: {amplitudeData ?? "No data returned"}";
+                return $"Failed to get Amplitude data: {amplitudePageData ?? "No data returned"}";
             }
 
-            return Prompt.ImplementAmplitude(id, instruction, amplitudeData);            // Step 3: Combine both for implementation
+            return Prompt.ImplementAmplitude(
+                id,
+                instruction,
+                amplitudePageData,
+                eventsTaxonomyData,
+                propertiesTaxonomyData,
+                implementationPatternData
+            );
         }
         catch (Exception ex)
         {
