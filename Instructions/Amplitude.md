@@ -106,6 +106,8 @@ The `amplitude.input.json` file contains an array of event definitions:
 
 Before implementing tracking, ensure all required constants exist:
 
+> **Important Rule:** Always check if a constant already exists in the appropriate constants file before adding a new one. If the constant exists, use it directly. Only add a new constant if it doesn't already exist in the file.
+
 #### 1.1 Event Names
 
 **Location:** `@aap/bootstrap/src/constants/usageTracking/eventNames.js`
@@ -361,9 +363,14 @@ const trackEventWithConditionalProps = () => {
 
 If your JSON data includes values not present in existing constants:
 
-1. **Identify the constant file** based on the property type
-2. **Add the constant** following the existing pattern
-3. **Export it** from the index file if not auto-exported
+1. **Check if the constant already exists** in the appropriate constants file
+2. **If it exists**, use that constant directly
+3. **If it doesn't exist**, proceed with adding it:
+   - **Identify the constant file** based on the property type
+   - **Add the constant** following the existing pattern
+   - **Export it** from the index file if not auto-exported
+
+> **Critical:** Always verify the constant doesn't already exist before adding a new one to avoid duplication.
 
 **Example: Adding a new workflow**
 
@@ -628,40 +635,48 @@ const MyComponent = () => {
 
 ## Best Practices
 
-### 1. Event Naming
+### 1. Constant Verification
+
+-   ✅ **Always check if a constant exists before adding a new one**
+-   ✅ Search the appropriate constants file for existing values
+-   ✅ Use existing constants to maintain consistency
+-   ❌ Don't add duplicate constants
+-   ❌ Don't assume a constant doesn't exist without checking
+
+### 2. Event Naming
 
 -   ✅ Use existing `USAGE_TRACKING_EVENT_NAMES` constants
 -   ✅ Follow the pattern: `{ENTITY}_{ACTION}` (e.g., `APPLET_OPENED`, `DEAL_SAVED`)
 -   ❌ Don't hardcode event names as strings
 
-### 2. Property Consistency
+### 3. Property Consistency
 
 -   ✅ Always include `category` and `productGroup`
 -   ✅ Use constants for all property values when available
 -   ✅ Include `layout` for UI-related events
 -   ❌ Don't mix different naming conventions (camelCase vs snake_case)
 
-### 3. Code Organization
+### 4. Code Organization
 
 -   ✅ Create custom hooks for complex tracking logic
 -   ✅ Define base properties at the top of the component
 -   ✅ Group related tracking calls together
 -   ❌ Don't scatter tracking calls throughout the component
 
-### 4. Performance
+### 5. Performance
 
 -   ✅ Track events asynchronously (already handled by `UsageTracker`)
 -   ✅ Use `useEffect` with proper dependencies for mount/unmount tracking
 -   ✅ Avoid tracking in render methods
 -   ❌ Don't track events in loops or high-frequency callbacks
 
-### 5. Testing
+### 6. Testing
 
 -   ✅ Mock `useUsageTracker` in component tests
 -   ✅ Verify tracking calls with correct properties
 -   ❌ Don't write test cases specifically for amplitude tracking (as per project guidelines)
 
-### 6. Properties with Multiple Values
+### 7. Properties with Multiple Values
 
 When a property can have multiple values (e.g., `type: ["create", "edit"]`):
 
@@ -669,25 +684,25 @@ When a property can have multiple values (e.g., `type: ["create", "edit"]`):
 -   ✅ Use conditional logic or prop values
 -   ❌ Don't pass arrays as property values
 
-### 7. Null/Undefined Properties
+### 8. Null/Undefined Properties
 
 -   ✅ Only include properties that have meaningful values
 -   ✅ Use conditional spreading or if statements to add optional properties
 -   ❌ Don't pass `null` or `undefined` as property values
 
-### 8. Workflow Tracking
+### 9. Workflow Tracking
 
 -   ✅ Include `workflow` property for multi-step processes
 -   ✅ Use consistent workflow identifiers across related events
 -   ✅ Document workflow purpose in code comments
 
-### 9. appletDefinition Integration
+### 10. appletDefinition Integration
 
 -   ✅ Define common properties in applet `usageTracking` configuration
 -   ✅ Let the framework automatically merge these properties
 -   ❌ Don't duplicate properties already defined in applet definition
 
-### 10. Error Tracking
+### 11. Error Tracking
 
 -   ✅ Track errors with `ERROR_SHOWN` event
 -   ✅ Include `errorType` and `errorMessage`
@@ -700,8 +715,9 @@ When a property can have multiple values (e.g., `type: ["create", "edit"]`):
 Use this checklist when implementing tracking from `amplitude.input.json`:
 
 -   [ ] Load and review the `amplitude.input.json` file
--   [ ] Verify all required constants exist in the constants files
--   [ ] Add any missing constants following the existing patterns
+-   [ ] **Check if required constants already exist in the constants files**
+-   [ ] If constants exist, use them directly
+-   [ ] If constants don't exist, add them following the existing patterns
 -   [ ] Identify the component(s) where tracking should be implemented
 -   [ ] Import required dependencies (`useUsageTracker`, constants)
 -   [ ] Initialize `useUsageTracker` hook in component
